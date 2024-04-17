@@ -12,7 +12,7 @@ const Note = require('./models/note.model');
 
 const HTTP_PORT = process.env.PORT || 8080;
 
-// mongoose.connect(process.env.MONGODB_URL);
+mongoose.connect(process.env.MONGODB_URL);
 app.use(express.json());
 
 app.use(
@@ -286,16 +286,18 @@ app.put('/updateNotePinned/:noteId', authenticateToken, async (req, res) => {
   }
 });
 
-// app.listen(8000);
+app.listen(HTTP_PORT);
 
-mongoose
-  .connect(process.env.MONGODB_URL)
-  .then(() => {
-    app.listen(HTTP_PORT, () => {
-      console.log('API listening on: ', HTTP_PORT);
-    });
-  })
-  .catch((err) => {
-    console.log('unable to start the server');
-    process.exit();
-  });
+module.exports = app;
+
+// mongoose
+//   .connect(process.env.MONGODB_URL)
+//   .then(() => {
+//     app.listen(HTTP_PORT, () => {
+//       console.log('API listening on: ', HTTP_PORT);
+//     });
+//   })
+//   .catch((err) => {
+//     console.log('unable to start the server');
+//     process.exit();
+//   });
