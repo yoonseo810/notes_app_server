@@ -44,37 +44,52 @@ app.post('/create', async (req, res) => {
       .status(400)
       .json({ error: true, message: 'Password is required' });
   }
+  try {
+    const isUser = await User.findOne({ email });
 
-  const isUser = await User.findOne({ email });
+    if (isUser) {
+      return res.json({
+        error: true,
+        message: 'User already exists',
+      });
+    }
 
-  if (isUser) {
-    return res.json({
-      error: true,
-      message: 'User already exists',
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = new User({
+      fullName,
+      email,
+      password: hashedPassword,
     });
+
+    await user.save();
+
+    const accessToken = jwt.sign({ user }, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: '36000m',
+    });
+
+    return res.json({
+      error: false,
+      fullName,
+      email,
+      accessToken,
+      message: 'Registration complete',
+    });
+  } catch (error) {
+    res.status(400).json({ error: true, message: 'Internal Server error' });
   }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  const user = new User({
-    fullName,
-    email,
-    password: hashedPassword,
-  });
-
-  await user.save();
-
-  const accessToken = jwt.sign({ user }, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: '36000m',
-  });
-
-  return res.json({
-    error: false,
-    user,
-    accessToken,
-    message: 'Registration complete',
-  });
 });
+
+// app.post('/create', (req, res) => {
+//   service
+//     .createUser(req.body)
+//     .then((msg) => {
+//       res.json({ message: msg });
+//     })
+//     .catch((msg) => {
+//       res.status(422).json({ message: msg });
+//     });
+// });
 
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
@@ -301,3 +316,15 @@ mongoose
   });
 
 module.exports = app;
+
+// service
+//   .connect()
+//   .then(() => {
+//     app.listen(HTTP_PORT, () => {
+//       console.log(`API listening on: ${HTTP_PORT}`);
+//     });
+//   })
+//   .catch((err) => {
+//     console.log(`unable to start the server: ${err}`);
+//     process.exit();
+//   });
