@@ -1,7 +1,6 @@
 const dotenv = require('dotenv');
 const express = require('express');
 const cors = require('cors');
-const app = express();
 dotenv.config();
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
@@ -9,17 +8,14 @@ const { authenticateToken, compareAsync } = require('./utils');
 const bcrypt = require('bcryptjs');
 const User = require('./models/user.model');
 const Note = require('./models/note.model');
+const app = express();
 
 const HTTP_PORT = process.env.PORT || 8080;
 
 mongoose.connect(process.env.MONGODB_URL);
 app.use(express.json());
 
-app.use(
-  cors({
-    origin: '*',
-  })
-);
+app.use(cors());
 
 app.get('/', (req, res) => {
   res.json({ data: 'hello' });
