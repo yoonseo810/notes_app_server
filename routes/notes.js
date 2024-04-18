@@ -5,6 +5,7 @@ const {
   editNote,
   deleteNote,
   updateNotePinned,
+  searchNotes,
 } = require('../controllers/note');
 
 const { authenticateToken } = require('../utils');
@@ -20,5 +21,7 @@ router.put('/edit/:noteId', authenticateToken, editNote);
 router.delete('/delete/:noteId', authenticateToken, deleteNote);
 
 router.put('/updatePinned/:noteId', authenticateToken, updateNotePinned);
+
+router.get('/searchNotes', authenticateToken, searchNotes);
 
 module.exports = router;
