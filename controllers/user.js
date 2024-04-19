@@ -124,9 +124,73 @@ const getUser = async (req, res, next) => {
   }
 };
 
+const changeUserPassword = async (req, res, next) => {
+  try {
+    const { password, _id } = req.body;
+
+    if (!password) {
+      res.status(404);
+      return next(new Error('Password is missing'));
+    }
+    const user = await User.findOne({ _id });
+
+    if (!user) {
+      res.status(404);
+      return next(new Error('User not found'));
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    user.password = hashedPassword;
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Password updated successfully',
+    });
+  } catch (error) {
+    console.log(error);
+    return next(error);
+  }
+};
+
+const updateUser = async (req, res, next) => {
+  try {
+    const { fullName, email, _id } = req.body;
+
+    if (!fullName || !email) {
+      res.status(404);
+      return next(new Error('Missing name or email'));
+    }
+
+    const user = await User.findOne({ _id });
+
+    if (!user) {
+      res.status(404);
+      return next(new Error('User not found'));
+    }
+
+    if (fullName) user.fullName = fullName;
+    if (email) user.email = email;
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      user,
+      message: 'User updated successfully',
+    });
+  } catch (error) {
+    console.log(error);
+    return next(error);
+  }
+};
+
 module.exports = {
   getAllUsers,
   createUser,
   login,
   getUser,
+  updateUser,
+  changeUserPassword,
 };
