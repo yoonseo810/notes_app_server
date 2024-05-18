@@ -26,13 +26,13 @@ const getTransactions = async (req, res, next) => {
 // add a transaction
 const addTransaction = async (req, res, next) => {
   try {
-    const { category, type, description, amount } = req.body;
+    const { category, expenseType, description, amount } = req.body;
     const {
       user: { user },
     } = req.user;
     const transaction = await Transaction.create({
       category,
-      type,
+      expenseType,
       description,
       amount,
       userId: user._id,
