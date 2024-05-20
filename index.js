@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/users');
 const noteRoutes = require('./routes/notes');
+const pokemonRoutes = require('./routes/pokemons');
 const transactionRoutes = require('./routes/transactions');
 const errorHandler = require('./middlewares/error');
 const app = express();
@@ -20,6 +21,8 @@ app.use('/api/users', userRoutes);
 app.use('/api/notes', noteRoutes);
 
 app.use('/api/transactions', transactionRoutes);
+
+app.use('/api/pokemon', pokemonRoutes);
 
 app.use('/', (req, res) => {
   return res.json({
